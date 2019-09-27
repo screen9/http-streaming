@@ -3,17 +3,11 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('global/document'), require('global/window'), require('video.js')) :
   typeof define === 'function' && define.amd ? define(['exports', 'global/document', 'global/window', 'video.js'], factory) :
   (global = global || self, factory(global.httpStreaming = {}, global.document, global.window, global.videojs));
-}(this, function (exports, document, window$1, videojs) { 'use strict';
+}(this, function (exports, document, window$2, videojs) { 'use strict';
 
   document = document && document.hasOwnProperty('default') ? document['default'] : document;
-  window$1 = window$1 && window$1.hasOwnProperty('default') ? window$1['default'] : window$1;
+  window$2 = window$2 && window$2.hasOwnProperty('default') ? window$2['default'] : window$2;
   videojs = videojs && videojs.hasOwnProperty('default') ? videojs['default'] : videojs;
-
-  function _inheritsLoose(subClass, superClass) {
-    subClass.prototype = Object.create(superClass.prototype);
-    subClass.prototype.constructor = subClass;
-    subClass.__proto__ = superClass;
-  }
 
   function _assertThisInitialized(self) {
     if (self === void 0) {
@@ -22,6 +16,16 @@
 
     return self;
   }
+
+  var assertThisInitialized = _assertThisInitialized;
+
+  function _inheritsLoose(subClass, superClass) {
+    subClass.prototype = Object.create(superClass.prototype);
+    subClass.prototype.constructor = subClass;
+    subClass.__proto__ = superClass;
+  }
+
+  var inheritsLoose = _inheritsLoose;
 
   function createCommonjsModule(fn, module) {
   	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -186,22 +190,31 @@
   /* jshint ignore:end */
   });
 
-  /**
-   * @file resolve-url.js - Handling how URLs are resolved and manipulated
-   */
-  var resolveUrl = function resolveUrl(baseURL, relativeURL) {
+  function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+  var URLToolkit = _interopDefault(urlToolkit);
+  var window$1 = _interopDefault(window$2);
+
+  var resolveUrl = function resolveUrl(baseUrl, relativeUrl) {
     // return early if we don't need to resolve
-    if (/^[a-z]+:/i.test(relativeURL)) {
-      return relativeURL;
+    if (/^[a-z]+:/i.test(relativeUrl)) {
+      return relativeUrl;
     } // if the base URL is relative then combine with the current location
 
 
-    if (!/\/\//i.test(baseURL)) {
-      baseURL = urlToolkit.buildAbsoluteURL(window$1.location.href, baseURL);
+    if (!/\/\//i.test(baseUrl)) {
+      baseUrl = URLToolkit.buildAbsoluteURL(window$1.location.href, baseUrl);
     }
 
-    return urlToolkit.buildAbsoluteURL(baseURL, relativeURL);
+    return URLToolkit.buildAbsoluteURL(baseUrl, relativeUrl);
   };
+
+  var resolveUrl_1 = resolveUrl;
+
+  /**
+   * @file resolve-url.js - Handling how URLs are resolved and manipulated
+   */
+  var resolveUrl$1 = resolveUrl_1;
   /**
    * Checks whether xhr request was redirected and returns correct url depending
    * on `handleManifestRedirects` option
@@ -1051,7 +1064,7 @@
   }(Stream);
 
   function decodeB64ToUint8Array(b64Text) {
-    var decodedString = window$1.atob(b64Text || '');
+    var decodedString = window$2.atob(b64Text || '');
     var array = new Uint8Array(decodedString.length);
 
     for (var i = 0; i < decodedString.length; i++) {
@@ -1599,15 +1612,15 @@
   };
   var resolveSegmentUris = function resolveSegmentUris(segment, baseUri) {
     if (!segment.resolvedUri) {
-      segment.resolvedUri = resolveUrl(baseUri, segment.uri);
+      segment.resolvedUri = resolveUrl$1(baseUri, segment.uri);
     }
 
     if (segment.key && !segment.key.resolvedUri) {
-      segment.key.resolvedUri = resolveUrl(baseUri, segment.key.uri);
+      segment.key.resolvedUri = resolveUrl$1(baseUri, segment.key.uri);
     }
 
     if (segment.map && !segment.map.resolvedUri) {
-      segment.map.resolvedUri = resolveUrl(baseUri, segment.map.uri);
+      segment.map.resolvedUri = resolveUrl$1(baseUri, segment.map.uri);
     }
   };
   /**
@@ -1666,7 +1679,7 @@
     while (i--) {
       var playlist = master.playlists[i];
       master.playlists[playlist.uri] = playlist;
-      playlist.resolvedUri = resolveUrl(master.uri, playlist.uri);
+      playlist.resolvedUri = resolveUrl$1(master.uri, playlist.uri);
       playlist.id = i;
 
       if (!playlist.attributes) {
@@ -1683,7 +1696,7 @@
   var resolveMediaGroupUris = function resolveMediaGroupUris(master) {
     forEachMediaGroup(master, function (properties) {
       if (properties.uri) {
-        properties.resolvedUri = resolveUrl(master.uri, properties.uri);
+        properties.resolvedUri = resolveUrl$1(master.uri, properties.uri);
       }
     });
   };
@@ -1725,7 +1738,7 @@
   var PlaylistLoader =
   /*#__PURE__*/
   function (_EventTarget) {
-    _inheritsLoose(PlaylistLoader, _EventTarget);
+    inheritsLoose(PlaylistLoader, _EventTarget);
 
     function PlaylistLoader(srcUrl, hls, options) {
       var _this;
@@ -1763,7 +1776,7 @@
 
         _this.state = 'HAVE_CURRENT_METADATA';
         _this.request = _this.hls_.xhr({
-          uri: resolveUrl(_this.master.uri, _this.media().uri),
+          uri: resolveUrl$1(_this.master.uri, _this.media().uri),
           withCredentials: _this.withCredentials
         }, function (error, req) {
           // disposed
@@ -1838,8 +1851,8 @@
 
 
       if (!this.media().endList) {
-        window$1.clearTimeout(this.mediaUpdateTimeout);
-        this.mediaUpdateTimeout = window$1.setTimeout(function () {
+        window$2.clearTimeout(this.mediaUpdateTimeout);
+        this.mediaUpdateTimeout = window$2.setTimeout(function () {
           _this2.trigger('mediaupdatetimeout');
         }, refreshDelay(this.media(), !!update));
       }
@@ -1853,8 +1866,8 @@
 
     _proto.dispose = function dispose() {
       this.stopRequest();
-      window$1.clearTimeout(this.mediaUpdateTimeout);
-      window$1.clearTimeout(this.finalRenditionTimeout);
+      window$2.clearTimeout(this.mediaUpdateTimeout);
+      window$2.clearTimeout(this.finalRenditionTimeout);
     };
 
     _proto.stopRequest = function stopRequest() {
@@ -1904,11 +1917,11 @@
         playlist = this.master.playlists[playlist];
       }
 
-      window$1.clearTimeout(this.finalRenditionTimeout);
+      window$2.clearTimeout(this.finalRenditionTimeout);
 
       if (isFinalRendition) {
         var delay = playlist.targetDuration / 2 * 1000 || 5 * 1000;
-        this.finalRenditionTimeout = window$1.setTimeout(this.media.bind(this, playlist, false), delay);
+        this.finalRenditionTimeout = window$2.setTimeout(this.media.bind(this, playlist, false), delay);
         return;
       }
 
@@ -1990,7 +2003,7 @@
 
     _proto.pause = function pause() {
       this.stopRequest();
-      window$1.clearTimeout(this.mediaUpdateTimeout);
+      window$2.clearTimeout(this.mediaUpdateTimeout);
 
       if (this.state === 'HAVE_NOTHING') {
         // If we pause the loader before any data has been retrieved, its as if we never
@@ -2020,12 +2033,12 @@
     _proto.load = function load(isFinalRendition) {
       var _this4 = this;
 
-      window$1.clearTimeout(this.mediaUpdateTimeout);
+      window$2.clearTimeout(this.mediaUpdateTimeout);
       var media = this.media();
 
       if (isFinalRendition) {
         var delay = media ? media.targetDuration / 2 * 1000 : 5 * 1000;
-        this.mediaUpdateTimeout = window$1.setTimeout(function () {
+        this.mediaUpdateTimeout = window$2.setTimeout(function () {
           return _this4.load();
         }, delay);
         return;
@@ -2122,7 +2135,7 @@
             'CLOSED-CAPTIONS': {},
             'SUBTITLES': {}
           },
-          uri: window$1.location.href,
+          uri: window$2.location.href,
           playlists: [{
             uri: _this5.srcUrl,
             id: 0,
@@ -2330,7 +2343,7 @@
 
 
       if (!playlist.endList) {
-        return window$1.Infinity;
+        return window$2.Infinity;
       }
     } // calculate the total duration based on the segment durations
 
@@ -2815,16 +2828,155 @@
     return headers;
   };
 
-  /*
-   * pkcs7.pad
-   * https://github.com/brightcove/pkcs7
-   *
-   * Copyright (c) 2014 Brightcove
-   * Licensed under the apache2 license.
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    return Constructor;
+  }
+
+  var createClass = _createClass;
+
+  /*! @name @videojs/vhs-utils @version 1.0.0 @license MIT */
+
+  /**
+   * @file stream.js
    */
 
   /**
+   * A lightweight readable stream implemention that handles event dispatching.
+   *
+   * @class Stream
+   */
+  var Stream$1 =
+  /*#__PURE__*/
+  function () {
+    function Stream() {
+      this.listeners = {};
+    }
+    /**
+     * Add a listener for a specified event type.
+     *
+     * @param {string} type the event name
+     * @param {Function} listener the callback to be invoked when an event of
+     * the specified type occurs
+     */
+
+
+    var _proto = Stream.prototype;
+
+    _proto.on = function on(type, listener) {
+      if (!this.listeners[type]) {
+        this.listeners[type] = [];
+      }
+
+      this.listeners[type].push(listener);
+    }
+    /**
+     * Remove a listener for a specified event type.
+     *
+     * @param {string} type the event name
+     * @param {Function} listener  a function previously registered for this
+     * type of event through `on`
+     * @return {boolean} if we could turn it off or not
+     */
+    ;
+
+    _proto.off = function off(type, listener) {
+      if (!this.listeners[type]) {
+        return false;
+      }
+
+      var index = this.listeners[type].indexOf(listener); // TODO: which is better?
+      // In Video.js we slice listener functions
+      // on trigger so that it does not mess up the order
+      // while we loop through.
+      //
+      // Here we slice on off so that the loop in trigger
+      // can continue using it's old reference to loop without
+      // messing up the order.
+
+      this.listeners[type] = this.listeners[type].slice(0);
+      this.listeners[type].splice(index, 1);
+      return index > -1;
+    }
+    /**
+     * Trigger an event of the specified type on this stream. Any additional
+     * arguments to this function are passed as parameters to event listeners.
+     *
+     * @param {string} type the event name
+     */
+    ;
+
+    _proto.trigger = function trigger(type) {
+      var callbacks = this.listeners[type];
+
+      if (!callbacks) {
+        return;
+      } // Slicing the arguments on every invocation of this method
+      // can add a significant amount of overhead. Avoid the
+      // intermediate object creation for the common case of a
+      // single callback argument
+
+
+      if (arguments.length === 2) {
+        var length = callbacks.length;
+
+        for (var i = 0; i < length; ++i) {
+          callbacks[i].call(this, arguments[1]);
+        }
+      } else {
+        var args = Array.prototype.slice.call(arguments, 1);
+        var _length = callbacks.length;
+
+        for (var _i = 0; _i < _length; ++_i) {
+          callbacks[_i].apply(this, args);
+        }
+      }
+    }
+    /**
+     * Destroys the stream and cleans up.
+     */
+    ;
+
+    _proto.dispose = function dispose() {
+      this.listeners = {};
+    }
+    /**
+     * Forwards all `data` events on this stream to the destination stream. The
+     * destination stream should provide a method `push` to receive the data
+     * events as they arrive.
+     *
+     * @param {Stream} destination the stream that will receive all `data` events
+     * @see http://nodejs.org/api/stream.html#stream_readable_pipe_destination_options
+     */
+    ;
+
+    _proto.pipe = function pipe(destination) {
+      this.on('data', function (data) {
+        destination.push(data);
+      });
+    };
+
+    return Stream;
+  }();
+
+  var stream = Stream$1;
+
+  /*! @name pkcs7 @version 1.0.3 @license Apache-2.0 */
+
+  /**
    * Returns the subarray of a Uint8Array without PKCS#7 padding.
+   *
    * @param padded {Uint8Array} unencrypted bytes that have been padded
    * @return {Uint8Array} the unpadded bytes
    * @see http://tools.ietf.org/html/rfc5652
@@ -2833,71 +2985,7 @@
     return padded.subarray(0, padded.byteLength - padded[padded.byteLength - 1]);
   }
 
-  var classCallCheck = function (instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  };
-
-  var createClass = function () {
-    function defineProperties(target, props) {
-      for (var i = 0; i < props.length; i++) {
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ("value" in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-      }
-    }
-
-    return function (Constructor, protoProps, staticProps) {
-      if (protoProps) defineProperties(Constructor.prototype, protoProps);
-      if (staticProps) defineProperties(Constructor, staticProps);
-      return Constructor;
-    };
-  }();
-
-
-
-
-
-
-
-
-
-  var inherits = function (subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-      throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-    }
-
-    subClass.prototype = Object.create(superClass && superClass.prototype, {
-      constructor: {
-        value: subClass,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-    if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-  };
-
-
-
-
-
-
-
-
-
-
-
-  var possibleConstructorReturn = function (self, call) {
-    if (!self) {
-      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }
-
-    return call && (typeof call === "object" || typeof call === "function") ? call : self;
-  };
+  /*! @name aes-decrypter @version 3.0.1 @license Apache-2.0 */
 
   /**
    * @file aes.js
@@ -2949,19 +3037,18 @@
     var decTable = tables[1];
     var sbox = encTable[4];
     var sboxInv = decTable[4];
-    var i = void 0;
-    var x = void 0;
-    var xInv = void 0;
+    var i;
+    var x;
+    var xInv;
     var d = [];
     var th = [];
-    var x2 = void 0;
-    var x4 = void 0;
-    var x8 = void 0;
-    var s = void 0;
-    var tEnc = void 0;
-    var tDec = void 0;
+    var x2;
+    var x4;
+    var x8;
+    var s;
+    var tEnc;
+    var tDec; // Compute double and third tables
 
-    // Compute double and third tables
     for (i = 0; i < 256; i++) {
       th[(d[i] = i << 1 ^ (i >> 7) * 283) ^ i] = i;
     }
@@ -2971,9 +3058,8 @@
       s = xInv ^ xInv << 1 ^ xInv << 2 ^ xInv << 3 ^ xInv << 4;
       s = s >> 8 ^ s & 255 ^ 99;
       sbox[x] = s;
-      sboxInv[s] = x;
+      sboxInv[s] = x; // Compute MixColumns
 
-      // Compute MixColumns
       x8 = d[x4 = d[x2 = d[x]]];
       tDec = x8 * 0x1010101 ^ x4 * 0x10001 ^ x2 * 0x101 ^ x * 0x1010100;
       tEnc = d[s] * 0x101 ^ s * 0x1010100;
@@ -2982,17 +3068,18 @@
         encTable[i][x] = tEnc = tEnc << 24 ^ tEnc >>> 8;
         decTable[i][s] = tDec = tDec << 24 ^ tDec >>> 8;
       }
-    }
+    } // Compactify. Considerable speedup on Firefox.
 
-    // Compactify. Considerable speedup on Firefox.
+
     for (i = 0; i < 5; i++) {
       encTable[i] = encTable[i].slice(0);
       decTable[i] = decTable[i].slice(0);
     }
+
     return tables;
   };
-  var aesTables = null;
 
+  var aesTables = null;
   /**
    * Schedule out an AES key for both encryption and decryption. This
    * is a low-level class. Use a cipher mode to do bulk encryption.
@@ -3001,34 +3088,33 @@
    * @param key {Array} The key as an array of 4, 6 or 8 words.
    */
 
-  var AES = function () {
+  var AES =
+  /*#__PURE__*/
+  function () {
     function AES(key) {
-      classCallCheck(this, AES);
-
       /**
-       * The expanded S-box and inverse S-box tables. These will be computed
-       * on the client so that we don't have to send them down the wire.
-       *
-       * There are two tables, _tables[0] is for encryption and
-       * _tables[1] is for decryption.
-       *
-       * The first 4 sub-tables are the expanded S-box with MixColumns. The
-       * last (_tables[01][4]) is the S-box itself.
-       *
-       * @private
-       */
+      * The expanded S-box and inverse S-box tables. These will be computed
+      * on the client so that we don't have to send them down the wire.
+      *
+      * There are two tables, _tables[0] is for encryption and
+      * _tables[1] is for decryption.
+      *
+      * The first 4 sub-tables are the expanded S-box with MixColumns. The
+      * last (_tables[01][4]) is the S-box itself.
+      *
+      * @private
+      */
       // if we have yet to precompute the S-box tables
       // do so now
       if (!aesTables) {
         aesTables = precompute();
-      }
-      // then make a copy of that object for use
+      } // then make a copy of that object for use
+
+
       this._tables = [[aesTables[0][0].slice(), aesTables[0][1].slice(), aesTables[0][2].slice(), aesTables[0][3].slice(), aesTables[0][4].slice()], [aesTables[1][0].slice(), aesTables[1][1].slice(), aesTables[1][2].slice(), aesTables[1][3].slice(), aesTables[1][4].slice()]];
-      var i = void 0;
-      var j = void 0;
-      var tmp = void 0;
-      var encKey = void 0;
-      var decKey = void 0;
+      var i;
+      var j;
+      var tmp;
       var sbox = this._tables[0][4];
       var decTable = this._tables[1];
       var keyLen = key.length;
@@ -3038,19 +3124,16 @@
         throw new Error('Invalid aes key size');
       }
 
-      encKey = key.slice(0);
-      decKey = [];
-      this._key = [encKey, decKey];
+      var encKey = key.slice(0);
+      var decKey = [];
+      this._key = [encKey, decKey]; // schedule encryption keys
 
-      // schedule encryption keys
       for (i = keyLen; i < 4 * keyLen + 28; i++) {
-        tmp = encKey[i - 1];
+        tmp = encKey[i - 1]; // apply sbox
 
-        // apply sbox
         if (i % keyLen === 0 || keyLen === 8 && i % keyLen === 4) {
-          tmp = sbox[tmp >>> 24] << 24 ^ sbox[tmp >> 16 & 255] << 16 ^ sbox[tmp >> 8 & 255] << 8 ^ sbox[tmp & 255];
+          tmp = sbox[tmp >>> 24] << 24 ^ sbox[tmp >> 16 & 255] << 16 ^ sbox[tmp >> 8 & 255] << 8 ^ sbox[tmp & 255]; // shift rows and add rcon
 
-          // shift rows and add rcon
           if (i % keyLen === 0) {
             tmp = tmp << 8 ^ tmp >>> 24 ^ rcon << 24;
             rcon = rcon << 1 ^ (rcon >> 7) * 283;
@@ -3058,11 +3141,12 @@
         }
 
         encKey[i] = encKey[i - keyLen] ^ tmp;
-      }
+      } // schedule decryption keys
 
-      // schedule decryption keys
+
       for (j = 0; i; j++, i--) {
         tmp = encKey[j & 3 ? i : i - 4];
+
         if (i <= 4 || j < 4) {
           decKey[j] = tmp;
         } else {
@@ -3070,60 +3154,64 @@
         }
       }
     }
-
     /**
      * Decrypt 16 bytes, specified as four 32-bit words.
      *
-     * @param {Number} encrypted0 the first word to decrypt
-     * @param {Number} encrypted1 the second word to decrypt
-     * @param {Number} encrypted2 the third word to decrypt
-     * @param {Number} encrypted3 the fourth word to decrypt
+     * @param {number} encrypted0 the first word to decrypt
+     * @param {number} encrypted1 the second word to decrypt
+     * @param {number} encrypted2 the third word to decrypt
+     * @param {number} encrypted3 the fourth word to decrypt
      * @param {Int32Array} out the array to write the decrypted words
      * into
-     * @param {Number} offset the offset into the output array to start
+     * @param {number} offset the offset into the output array to start
      * writing results
      * @return {Array} The plaintext.
      */
 
 
-    AES.prototype.decrypt = function decrypt(encrypted0, encrypted1, encrypted2, encrypted3, out, offset) {
-      var key = this._key[1];
-      // state variables a,b,c,d are loaded with pre-whitened data
+    var _proto = AES.prototype;
+
+    _proto.decrypt = function decrypt(encrypted0, encrypted1, encrypted2, encrypted3, out, offset) {
+      var key = this._key[1]; // state variables a,b,c,d are loaded with pre-whitened data
+
       var a = encrypted0 ^ key[0];
       var b = encrypted3 ^ key[1];
       var c = encrypted2 ^ key[2];
       var d = encrypted1 ^ key[3];
-      var a2 = void 0;
-      var b2 = void 0;
-      var c2 = void 0;
+      var a2;
+      var b2;
+      var c2; // key.length === 2 ?
 
-      // key.length === 2 ?
       var nInnerRounds = key.length / 4 - 2;
-      var i = void 0;
+      var i;
       var kIndex = 4;
-      var table = this._tables[1];
+      var table = this._tables[1]; // load up the tables
 
-      // load up the tables
       var table0 = table[0];
       var table1 = table[1];
       var table2 = table[2];
       var table3 = table[3];
-      var sbox = table[4];
+      var sbox = table[4]; // Inner rounds. Cribbed from OpenSSL.
 
-      // Inner rounds. Cribbed from OpenSSL.
       for (i = 0; i < nInnerRounds; i++) {
         a2 = table0[a >>> 24] ^ table1[b >> 16 & 255] ^ table2[c >> 8 & 255] ^ table3[d & 255] ^ key[kIndex];
         b2 = table0[b >>> 24] ^ table1[c >> 16 & 255] ^ table2[d >> 8 & 255] ^ table3[a & 255] ^ key[kIndex + 1];
         c2 = table0[c >>> 24] ^ table1[d >> 16 & 255] ^ table2[a >> 8 & 255] ^ table3[b & 255] ^ key[kIndex + 2];
         d = table0[d >>> 24] ^ table1[a >> 16 & 255] ^ table2[b >> 8 & 255] ^ table3[c & 255] ^ key[kIndex + 3];
         kIndex += 4;
-        a = a2;b = b2;c = c2;
-      }
+        a = a2;
+        b = b2;
+        c = c2;
+      } // Last round.
 
-      // Last round.
+
       for (i = 0; i < 4; i++) {
         out[(3 & -i) + offset] = sbox[a >>> 24] << 24 ^ sbox[b >> 16 & 255] << 16 ^ sbox[c >> 8 & 255] << 8 ^ sbox[d & 255] ^ key[kIndex++];
-        a2 = a;a = b;b = c;c = d;d = a2;
+        a2 = a;
+        a = b;
+        b = c;
+        c = d;
+        d = a2;
       }
     };
 
@@ -3131,144 +3219,27 @@
   }();
 
   /**
-   * @file stream.js
-   */
-  /**
-   * A lightweight readable stream implemention that handles event dispatching.
-   *
-   * @class Stream
-   */
-  var Stream$1 = function () {
-    function Stream() {
-      classCallCheck(this, Stream);
-
-      this.listeners = {};
-    }
-
-    /**
-     * Add a listener for a specified event type.
-     *
-     * @param {String} type the event name
-     * @param {Function} listener the callback to be invoked when an event of
-     * the specified type occurs
-     */
-
-
-    Stream.prototype.on = function on(type, listener) {
-      if (!this.listeners[type]) {
-        this.listeners[type] = [];
-      }
-      this.listeners[type].push(listener);
-    };
-
-    /**
-     * Remove a listener for a specified event type.
-     *
-     * @param {String} type the event name
-     * @param {Function} listener  a function previously registered for this
-     * type of event through `on`
-     * @return {Boolean} if we could turn it off or not
-     */
-
-
-    Stream.prototype.off = function off(type, listener) {
-      if (!this.listeners[type]) {
-        return false;
-      }
-
-      var index = this.listeners[type].indexOf(listener);
-
-      this.listeners[type].splice(index, 1);
-      return index > -1;
-    };
-
-    /**
-     * Trigger an event of the specified type on this stream. Any additional
-     * arguments to this function are passed as parameters to event listeners.
-     *
-     * @param {String} type the event name
-     */
-
-
-    Stream.prototype.trigger = function trigger(type) {
-      var callbacks = this.listeners[type];
-
-      if (!callbacks) {
-        return;
-      }
-
-      // Slicing the arguments on every invocation of this method
-      // can add a significant amount of overhead. Avoid the
-      // intermediate object creation for the common case of a
-      // single callback argument
-      if (arguments.length === 2) {
-        var length = callbacks.length;
-
-        for (var i = 0; i < length; ++i) {
-          callbacks[i].call(this, arguments[1]);
-        }
-      } else {
-        var args = Array.prototype.slice.call(arguments, 1);
-        var _length = callbacks.length;
-
-        for (var _i = 0; _i < _length; ++_i) {
-          callbacks[_i].apply(this, args);
-        }
-      }
-    };
-
-    /**
-     * Destroys the stream and cleans up.
-     */
-
-
-    Stream.prototype.dispose = function dispose() {
-      this.listeners = {};
-    };
-    /**
-     * Forwards all `data` events on this stream to the destination stream. The
-     * destination stream should provide a method `push` to receive the data
-     * events as they arrive.
-     *
-     * @param {Stream} destination the stream that will receive all `data` events
-     * @see http://nodejs.org/api/stream.html#stream_readable_pipe_destination_options
-     */
-
-
-    Stream.prototype.pipe = function pipe(destination) {
-      this.on('data', function (data) {
-        destination.push(data);
-      });
-    };
-
-    return Stream;
-  }();
-
-  /**
-   * @file async-stream.js
-   */
-  /**
-   * A wrapper around the Stream class to use setTiemout
+   * A wrapper around the Stream class to use setTimeout
    * and run stream "jobs" Asynchronously
    *
    * @class AsyncStream
    * @extends Stream
    */
 
-  var AsyncStream = function (_Stream) {
-    inherits(AsyncStream, _Stream);
+  var AsyncStream =
+  /*#__PURE__*/
+  function (_Stream) {
+    inheritsLoose(AsyncStream, _Stream);
 
     function AsyncStream() {
-      classCallCheck(this, AsyncStream);
+      var _this;
 
-      var _this = possibleConstructorReturn(this, _Stream.call(this, Stream$1));
-
+      _this = _Stream.call(this, stream) || this;
       _this.jobs = [];
       _this.delay = 1;
       _this.timeout_ = null;
       return _this;
     }
-
     /**
      * process an async job
      *
@@ -3276,47 +3247,43 @@
      */
 
 
-    AsyncStream.prototype.processJob_ = function processJob_() {
+    var _proto = AsyncStream.prototype;
+
+    _proto.processJob_ = function processJob_() {
       this.jobs.shift()();
+
       if (this.jobs.length) {
         this.timeout_ = setTimeout(this.processJob_.bind(this), this.delay);
       } else {
         this.timeout_ = null;
       }
-    };
-
+    }
     /**
      * push a job into the stream
      *
      * @param {Function} job the job to push into the stream
      */
+    ;
 
-
-    AsyncStream.prototype.push = function push(job) {
+    _proto.push = function push(job) {
       this.jobs.push(job);
+
       if (!this.timeout_) {
         this.timeout_ = setTimeout(this.processJob_.bind(this), this.delay);
       }
     };
 
     return AsyncStream;
-  }(Stream$1);
-
-  /**
-   * @file decrypter.js
-   *
-   * An asynchronous implementation of AES-128 CBC decryption with
-   * PKCS#7 padding.
-   */
+  }(stream);
 
   /**
    * Convert network-order (big-endian) bytes into their little-endian
    * representation.
    */
+
   var ntoh = function ntoh(word) {
     return word << 24 | (word & 0xff00) << 8 | (word & 0xff0000) >> 8 | word >>> 24;
   };
-
   /**
    * Decrypt bytes using AES-128 with CBC and PKCS#7 padding.
    *
@@ -3330,58 +3297,51 @@
    * @see http://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Cipher_Block_Chaining_.28CBC.29
    * @see https://tools.ietf.org/html/rfc2315
    */
+
+
   var decrypt = function decrypt(encrypted, key, initVector) {
     // word-level access to the encrypted bytes
     var encrypted32 = new Int32Array(encrypted.buffer, encrypted.byteOffset, encrypted.byteLength >> 2);
+    var decipher = new AES(Array.prototype.slice.call(key)); // byte and word-level access for the decrypted output
 
-    var decipher = new AES(Array.prototype.slice.call(key));
-
-    // byte and word-level access for the decrypted output
     var decrypted = new Uint8Array(encrypted.byteLength);
-    var decrypted32 = new Int32Array(decrypted.buffer);
-
-    // temporary variables for working with the IV, encrypted, and
+    var decrypted32 = new Int32Array(decrypted.buffer); // temporary variables for working with the IV, encrypted, and
     // decrypted data
-    var init0 = void 0;
-    var init1 = void 0;
-    var init2 = void 0;
-    var init3 = void 0;
-    var encrypted0 = void 0;
-    var encrypted1 = void 0;
-    var encrypted2 = void 0;
-    var encrypted3 = void 0;
 
-    // iteration variable
-    var wordIx = void 0;
+    var init0;
+    var init1;
+    var init2;
+    var init3;
+    var encrypted0;
+    var encrypted1;
+    var encrypted2;
+    var encrypted3; // iteration variable
 
-    // pull out the words of the IV to ensure we don't modify the
+    var wordIx; // pull out the words of the IV to ensure we don't modify the
     // passed-in reference and easier access
+
     init0 = initVector[0];
     init1 = initVector[1];
     init2 = initVector[2];
-    init3 = initVector[3];
-
-    // decrypt four word sequences, applying cipher-block chaining (CBC)
+    init3 = initVector[3]; // decrypt four word sequences, applying cipher-block chaining (CBC)
     // to each decrypted block
+
     for (wordIx = 0; wordIx < encrypted32.length; wordIx += 4) {
       // convert big-endian (network order) words into little-endian
       // (javascript order)
       encrypted0 = ntoh(encrypted32[wordIx]);
       encrypted1 = ntoh(encrypted32[wordIx + 1]);
       encrypted2 = ntoh(encrypted32[wordIx + 2]);
-      encrypted3 = ntoh(encrypted32[wordIx + 3]);
+      encrypted3 = ntoh(encrypted32[wordIx + 3]); // decrypt the block
 
-      // decrypt the block
-      decipher.decrypt(encrypted0, encrypted1, encrypted2, encrypted3, decrypted32, wordIx);
-
-      // XOR with the IV, and restore network byte-order to obtain the
+      decipher.decrypt(encrypted0, encrypted1, encrypted2, encrypted3, decrypted32, wordIx); // XOR with the IV, and restore network byte-order to obtain the
       // plaintext
+
       decrypted32[wordIx] = ntoh(decrypted32[wordIx] ^ init0);
       decrypted32[wordIx + 1] = ntoh(decrypted32[wordIx + 1] ^ init1);
       decrypted32[wordIx + 2] = ntoh(decrypted32[wordIx + 2] ^ init2);
-      decrypted32[wordIx + 3] = ntoh(decrypted32[wordIx + 3] ^ init3);
+      decrypted32[wordIx + 3] = ntoh(decrypted32[wordIx + 3] ^ init3); // setup the IV for the next round
 
-      // setup the IV for the next round
       init0 = encrypted0;
       init1 = encrypted1;
       init2 = encrypted2;
@@ -3390,7 +3350,6 @@
 
     return decrypted;
   };
-
   /**
    * The `Decrypter` class that manages decryption of AES
    * data through `AsyncStream` objects and the `decrypt`
@@ -3403,55 +3362,57 @@
    * @class Decrypter
    */
 
-  var Decrypter = function () {
-    function Decrypter(encrypted, key, initVector, done) {
-      classCallCheck(this, Decrypter);
 
+  var Decrypter =
+  /*#__PURE__*/
+  function () {
+    function Decrypter(encrypted, key, initVector, done) {
       var step = Decrypter.STEP;
       var encrypted32 = new Int32Array(encrypted.buffer);
       var decrypted = new Uint8Array(encrypted.byteLength);
       var i = 0;
+      this.asyncStream_ = new AsyncStream(); // split up the encryption job and do the individual chunks asynchronously
 
-      this.asyncStream_ = new AsyncStream();
-
-      // split up the encryption job and do the individual chunks asynchronously
       this.asyncStream_.push(this.decryptChunk_(encrypted32.subarray(i, i + step), key, initVector, decrypted));
+
       for (i = step; i < encrypted32.length; i += step) {
         initVector = new Uint32Array([ntoh(encrypted32[i - 4]), ntoh(encrypted32[i - 3]), ntoh(encrypted32[i - 2]), ntoh(encrypted32[i - 1])]);
         this.asyncStream_.push(this.decryptChunk_(encrypted32.subarray(i, i + step), key, initVector, decrypted));
-      }
-      // invoke the done() callback when everything is finished
+      } // invoke the done() callback when everything is finished
+
+
       this.asyncStream_.push(function () {
         // remove pkcs#7 padding from the decrypted bytes
         done(null, unpad(decrypted));
       });
     }
-
     /**
      * a getter for step the maximum number of bytes to process at one time
      *
-     * @return {Number} the value of step 32000
+     * @return {number} the value of step 32000
      */
 
+
+    var _proto = Decrypter.prototype;
 
     /**
      * @private
      */
-    Decrypter.prototype.decryptChunk_ = function decryptChunk_(encrypted, key, initVector, decrypted) {
+    _proto.decryptChunk_ = function decryptChunk_(encrypted, key, initVector, decrypted) {
       return function () {
         var bytes = decrypt(encrypted, key, initVector);
-
         decrypted.set(bytes, encrypted.byteOffset);
       };
     };
 
     createClass(Decrypter, null, [{
-      key: 'STEP',
-      get: function get$$1() {
+      key: "STEP",
+      get: function get() {
         // 4 * 8000;
         return 32000;
       }
     }]);
+
     return Decrypter;
   }();
 
@@ -4331,7 +4292,7 @@
   /* jshint ignore:end */
   });
 
-  var resolveUrl$1 = function resolveUrl(baseUrl, relativeUrl) {
+  var resolveUrl$2 = function resolveUrl(baseUrl, relativeUrl) {
     // return early if we don't need to resolve
     if (/^[a-z]+:/i.test(relativeUrl)) {
       return relativeUrl;
@@ -4339,7 +4300,7 @@
 
 
     if (!/\/\//i.test(baseUrl)) {
-      baseUrl = urlToolkit$1.buildAbsoluteURL(window$1.location.href, baseUrl);
+      baseUrl = urlToolkit$1.buildAbsoluteURL(window$2.location.href, baseUrl);
     }
 
     return urlToolkit$1.buildAbsoluteURL(baseUrl, relativeUrl);
@@ -4382,7 +4343,7 @@
         indexRange = _ref$indexRange === void 0 ? '' : _ref$indexRange;
     var segment = {
       uri: source,
-      resolvedUri: resolveUrl$1(baseUrl || '', source)
+      resolvedUri: resolveUrl$2(baseUrl || '', source)
     };
 
     if (range || indexRange) {
@@ -5245,7 +5206,7 @@
         uri: uri,
         timeline: segment.timeline,
         duration: segment.duration,
-        resolvedUri: resolveUrl$1(attributes.baseUrl || '', uri),
+        resolvedUri: resolveUrl$2(attributes.baseUrl || '', uri),
         map: mapSegment,
         number: segment.number
       };
@@ -5665,7 +5626,7 @@
   };
 
   function decodeB64ToUint8Array$1(b64Text) {
-    var decodedString = window$1.atob(b64Text);
+    var decodedString = window$2.atob(b64Text);
     var array = new Uint8Array(decodedString.length);
 
     for (var i = 0; i < decodedString.length; i++) {
@@ -5699,7 +5660,7 @@
 
     return flatten(referenceUrls.map(function (reference) {
       return baseUrlElements.map(function (baseUrlElement) {
-        return resolveUrl$1(reference, getContent(baseUrlElement));
+        return resolveUrl$2(reference, getContent(baseUrlElement));
       });
     }));
   };
@@ -5941,7 +5902,7 @@
       var periodAtt = parseAttributes$1(period);
       var parsedPeriodId = parseInt(periodAtt.id, 10); // fallback to mapping index if Period@id is not a number
 
-      var periodIndex = window$1.isNaN(parsedPeriodId) ? index : parsedPeriodId;
+      var periodIndex = window$2.isNaN(parsedPeriodId) ? index : parsedPeriodId;
       var periodAttributes = merge(mpdAttributes, {
         periodIndex: periodIndex
       });
@@ -5999,7 +5960,7 @@
       throw new Error(errors.DASH_EMPTY_MANIFEST);
     }
 
-    var parser = new window$1.DOMParser();
+    var parser = new window$2.DOMParser();
     var xml = parser.parseFromString(manifestString, 'application/xml');
     var mpd = xml && xml.documentElement.tagName === 'MPD' ? xml.documentElement : null;
 
@@ -7404,7 +7365,7 @@
   var DashPlaylistLoader =
   /*#__PURE__*/
   function (_EventTarget) {
-    _inheritsLoose(DashPlaylistLoader, _EventTarget);
+    inheritsLoose(DashPlaylistLoader, _EventTarget);
 
     // DashPlaylistLoader must accept either a src url or a playlist because subsequent
     // playlist loader setups from media groups will expect to be able to pass a playlist
@@ -7449,7 +7410,7 @@
         // once multi-period is refactored
 
         _this.sidxMapping_ = {};
-        return _assertThisInitialized(_this);
+        return assertThisInitialized(_this);
       }
 
       _this.setupChildLoader(masterPlaylistLoader, srcUrlOrPlaylist);
@@ -7467,9 +7428,9 @@
     _proto.dispose = function dispose() {
       this.stopRequest();
       this.loadedPlaylists_ = {};
-      window$1.clearTimeout(this.minimumUpdatePeriodTimeout_);
-      window$1.clearTimeout(this.mediaRequest_);
-      window$1.clearTimeout(this.mediaUpdateTimeout);
+      window$2.clearTimeout(this.minimumUpdatePeriodTimeout_);
+      window$2.clearTimeout(this.mediaRequest_);
+      window$2.clearTimeout(this.mediaUpdateTimeout);
     };
 
     _proto.hasPendingRequest = function hasPendingRequest() {
@@ -7571,7 +7532,7 @@
       if (!playlist.sidx) {
         // Continue asynchronously if there is no sidx
         // wait one tick to allow haveMaster to run first on a child loader
-        this.mediaRequest_ = window$1.setTimeout(this.haveMetadata.bind(this, {
+        this.mediaRequest_ = window$2.setTimeout(this.haveMetadata.bind(this, {
           startingState: startingState,
           playlist: playlist
         }), 0); // exit early and don't do sidx work
@@ -7633,8 +7594,8 @@
 
     _proto.pause = function pause() {
       this.stopRequest();
-      window$1.clearTimeout(this.mediaUpdateTimeout);
-      window$1.clearTimeout(this.minimumUpdatePeriodTimeout_);
+      window$2.clearTimeout(this.mediaUpdateTimeout);
+      window$2.clearTimeout(this.minimumUpdatePeriodTimeout_);
 
       if (this.state === 'HAVE_NOTHING') {
         // If we pause the loader before any data has been retrieved, its as if we never
@@ -7646,13 +7607,13 @@
     _proto.load = function load(isFinalRendition) {
       var _this4 = this;
 
-      window$1.clearTimeout(this.mediaUpdateTimeout);
-      window$1.clearTimeout(this.minimumUpdatePeriodTimeout_);
+      window$2.clearTimeout(this.mediaUpdateTimeout);
+      window$2.clearTimeout(this.minimumUpdatePeriodTimeout_);
       var media = this.media();
 
       if (isFinalRendition) {
         var delay = media ? media.targetDuration / 2 * 1000 : 5 * 1000;
-        this.mediaUpdateTimeout = window$1.setTimeout(function () {
+        this.mediaUpdateTimeout = window$2.setTimeout(function () {
           return _this4.load();
         }, delay);
         return;
@@ -7715,7 +7676,7 @@
       // Call this asynchronously to match the xhr request behavior below
 
       if (this.masterPlaylistLoader_) {
-        this.mediaRequest_ = window$1.setTimeout(this.haveMaster_.bind(this), 0);
+        this.mediaRequest_ = window$2.setTimeout(this.haveMaster_.bind(this), 0);
         return;
       } // request the specified URL
 
@@ -7787,7 +7748,7 @@
       }
 
       this.request = this.hls_.xhr({
-        uri: resolveUrl(this.srcUrl, utcTiming.value),
+        uri: resolveUrl$1(this.srcUrl, utcTiming.value),
         method: utcTiming.method,
         withCredentials: this.withCredentials
       }, function (error, req) {
@@ -7861,7 +7822,7 @@
 
 
       if (this.master && this.master.minimumUpdatePeriod) {
-        this.minimumUpdatePeriodTimeout_ = window$1.setTimeout(function () {
+        this.minimumUpdatePeriodTimeout_ = window$2.setTimeout(function () {
           _this7.trigger('minimumUpdatePeriod');
         }, this.master.minimumUpdatePeriod);
       }
@@ -7931,7 +7892,7 @@
 
 
                 _this8.sidxMapping_[sidxKey].sidx = sidx;
-                _this8.minimumUpdatePeriodTimeout_ = window$1.setTimeout(function () {
+                _this8.minimumUpdatePeriodTimeout_ = window$2.setTimeout(function () {
                   _this8.trigger('minimumUpdatePeriod');
                 }, _this8.master.minimumUpdatePeriod); // TODO: do we need to reload the current playlist?
 
@@ -7945,7 +7906,7 @@
           }
         }
 
-        _this8.minimumUpdatePeriodTimeout_ = window$1.setTimeout(function () {
+        _this8.minimumUpdatePeriodTimeout_ = window$2.setTimeout(function () {
           _this8.trigger('minimumUpdatePeriod');
         }, _this8.master.minimumUpdatePeriod);
       });
@@ -7991,7 +7952,7 @@
       }
 
       if (!this.media().endList) {
-        this.mediaUpdateTimeout = window$1.setTimeout(function () {
+        this.mediaUpdateTimeout = window$2.setTimeout(function () {
           _this9.trigger('mediaupdatetimeout');
         }, refreshDelay(this.media(), !!updatedMaster));
       }
@@ -8399,7 +8360,7 @@
     this.trigger('reset', flushSource);
   };
 
-  var stream = Stream$2;
+  var stream$1 = Stream$2;
 
   var MAX_TS = 8589934592;
 
@@ -8481,7 +8442,7 @@
     };
   };
 
-  TimestampRolloverStream.prototype = new stream();
+  TimestampRolloverStream.prototype = new stream$1();
 
   var timestampRolloverStream = {
     TimestampRolloverStream: TimestampRolloverStream,
@@ -17097,7 +17058,7 @@
       return '';
     }
 
-    var result = window$1.getComputedStyle(el);
+    var result = window$2.getComputedStyle(el);
 
     if (!result) {
       return '';
@@ -17146,13 +17107,13 @@
       leftBandwidth = left.attributes.BANDWIDTH;
     }
 
-    leftBandwidth = leftBandwidth || window$1.Number.MAX_VALUE;
+    leftBandwidth = leftBandwidth || window$2.Number.MAX_VALUE;
 
     if (right.attributes.BANDWIDTH) {
       rightBandwidth = right.attributes.BANDWIDTH;
     }
 
-    rightBandwidth = rightBandwidth || window$1.Number.MAX_VALUE;
+    rightBandwidth = rightBandwidth || window$2.Number.MAX_VALUE;
     return leftBandwidth - rightBandwidth;
   };
   /**
@@ -17174,13 +17135,13 @@
       leftWidth = left.attributes.RESOLUTION.width;
     }
 
-    leftWidth = leftWidth || window$1.Number.MAX_VALUE;
+    leftWidth = leftWidth || window$2.Number.MAX_VALUE;
 
     if (right.attributes.RESOLUTION && right.attributes.RESOLUTION.width) {
       rightWidth = right.attributes.RESOLUTION.width;
     }
 
-    rightWidth = rightWidth || window$1.Number.MAX_VALUE; // NOTE - Fallback to bandwidth sort as appropriate in cases where multiple renditions
+    rightWidth = rightWidth || window$2.Number.MAX_VALUE; // NOTE - Fallback to bandwidth sort as appropriate in cases where multiple renditions
     // have the same media dimensions/ resolution
 
     if (leftWidth === rightWidth && left.attributes.BANDWIDTH && right.attributes.BANDWIDTH) {
@@ -17214,7 +17175,7 @@
       var width = playlist.attributes.RESOLUTION && playlist.attributes.RESOLUTION.width;
       var height = playlist.attributes.RESOLUTION && playlist.attributes.RESOLUTION.height;
       bandwidth = playlist.attributes.BANDWIDTH;
-      bandwidth = bandwidth || window$1.Number.MAX_VALUE;
+      bandwidth = bandwidth || window$2.Number.MAX_VALUE;
       return {
         bandwidth: bandwidth,
         width: width,
@@ -17653,7 +17614,7 @@
 
   };
 
-  CaptionStream.prototype = new stream();
+  CaptionStream.prototype = new stream$1();
   CaptionStream.prototype.push = function(event) {
     var sei, userData, newCaptionPackets;
 
@@ -18154,7 +18115,7 @@
 
     };
   };
-  Cea608Stream.prototype = new stream();
+  Cea608Stream.prototype = new stream$1();
   // Trigger a cue point that captures the current state of the
   // display buffer
   Cea608Stream.prototype.flushDisplayed = function(pts) {
@@ -18967,7 +18928,7 @@
       return;
     }
 
-    var Cue = window$1.WebKitDataCue || window$1.VTTCue;
+    var Cue = window$2.WebKitDataCue || window$2.VTTCue;
     captionArray.forEach(function (caption) {
       var track = caption.stream;
       inbandTextTracks[track].addCue(new Cue(caption.startTime + timestampOffset, caption.endTime + timestampOffset, caption.text));
@@ -19026,7 +18987,7 @@
       return;
     }
 
-    var Cue = window$1.WebKitDataCue || window$1.VTTCue;
+    var Cue = window$2.WebKitDataCue || window$2.VTTCue;
     var metadataTrack = inbandTextTracks.metadataTrack_;
 
     if (!metadataTrack) {
@@ -19039,7 +19000,7 @@
       // This likely occurs when you have an non-timed ID3 tag like TIT2,
       // which is the "Title/Songname/Content description" frame
 
-      if (typeof time !== 'number' || window$1.isNaN(time) || time < 0 || !(time < Infinity)) {
+      if (typeof time !== 'number' || window$2.isNaN(time) || time < 0 || !(time < Infinity)) {
         return;
       }
 
@@ -19343,7 +19304,7 @@
   var SegmentLoader =
   /*#__PURE__*/
   function (_videojs$EventTarget) {
-    _inheritsLoose(SegmentLoader, _videojs$EventTarget);
+    inheritsLoose(SegmentLoader, _videojs$EventTarget);
 
     function SegmentLoader(settings, options) {
       var _this;
@@ -19452,7 +19413,7 @@
 
       _this.fetchAtBuffer_ = false;
       _this.logger_ = logger("SegmentLoader[" + _this.loaderType_ + "]");
-      Object.defineProperty(_assertThisInitialized(_this), 'state', {
+      Object.defineProperty(assertThisInitialized(_this), 'state', {
         get: function get() {
           return this.state_;
         },
@@ -19882,7 +19843,7 @@
 
     _proto.pause = function pause() {
       if (this.checkBufferTimeout_) {
-        window$1.clearTimeout(this.checkBufferTimeout_);
+        window$2.clearTimeout(this.checkBufferTimeout_);
         this.checkBufferTimeout_ = null;
       }
     }
@@ -20012,10 +19973,10 @@
 
     _proto.monitorBuffer_ = function monitorBuffer_() {
       if (this.checkBufferTimeout_) {
-        window$1.clearTimeout(this.checkBufferTimeout_);
+        window$2.clearTimeout(this.checkBufferTimeout_);
       }
 
-      this.checkBufferTimeout_ = window$1.setTimeout(this.monitorBufferTick_.bind(this), 1);
+      this.checkBufferTimeout_ = window$2.setTimeout(this.monitorBufferTick_.bind(this), 1);
     }
     /**
      * As long as the SegmentLoader is in the READY state, periodically
@@ -20031,10 +19992,10 @@
       }
 
       if (this.checkBufferTimeout_) {
-        window$1.clearTimeout(this.checkBufferTimeout_);
+        window$2.clearTimeout(this.checkBufferTimeout_);
       }
 
-      this.checkBufferTimeout_ = window$1.setTimeout(this.monitorBufferTick_.bind(this), CHECK_BUFFER_DELAY);
+      this.checkBufferTimeout_ = window$2.setTimeout(this.monitorBufferTick_.bind(this), CHECK_BUFFER_DELAY);
     }
     /**
      * fill the buffer with segements unless the sourceBuffers are
@@ -21349,7 +21310,7 @@
       }
 
       removeCuesFromTrack(start, end, this.segmentMetadataTrack_);
-      var Cue = window$1.WebKitDataCue || window$1.VTTCue;
+      var Cue = window$2.WebKitDataCue || window$2.VTTCue;
       var value = {
         custom: segment.custom,
         dateTimeObject: segment.dateTimeObject,
@@ -21673,7 +21634,7 @@
   var SourceUpdater =
   /*#__PURE__*/
   function (_videojs$EventTarget) {
-    _inheritsLoose(SourceUpdater, _videojs$EventTarget);
+    inheritsLoose(SourceUpdater, _videojs$EventTarget);
 
     function SourceUpdater(mediaSource) {
       var _this;
@@ -22092,7 +22053,7 @@
   var VTTSegmentLoader =
   /*#__PURE__*/
   function (_SegmentLoader) {
-    _inheritsLoose(VTTSegmentLoader, _SegmentLoader);
+    inheritsLoose(VTTSegmentLoader, _SegmentLoader);
 
     function VTTSegmentLoader(settings, options) {
       var _this;
@@ -22362,7 +22323,7 @@
 
       segmentInfo.bytes = simpleSegment.bytes; // Make sure that vttjs has loaded, otherwise, wait till it finished loading
 
-      if (typeof window$1.WebVTT !== 'function' && this.subtitlesTrack_ && this.subtitlesTrack_.tech_) {
+      if (typeof window$2.WebVTT !== 'function' && this.subtitlesTrack_ && this.subtitlesTrack_.tech_) {
         var loadHandler;
 
         var errorHandler = function errorHandler() {
@@ -22445,14 +22406,14 @@
       var decoder;
       var decodeBytesToString = false;
 
-      if (typeof window$1.TextDecoder === 'function') {
-        decoder = new window$1.TextDecoder('utf8');
+      if (typeof window$2.TextDecoder === 'function') {
+        decoder = new window$2.TextDecoder('utf8');
       } else {
-        decoder = window$1.WebVTT.StringDecoder();
+        decoder = window$2.WebVTT.StringDecoder();
         decodeBytesToString = true;
       }
 
-      var parser = new window$1.WebVTT.Parser(window$1, window$1.vttjs, decoder);
+      var parser = new window$2.WebVTT.Parser(window$2, window$2.vttjs, decoder);
       segmentInfo.cues = [];
       segmentInfo.timestampmap = {
         MPEGTS: 0,
@@ -22604,7 +22565,7 @@
         cue.endTime += segment.duration;
       } else {
         if ('cueOut' in segment) {
-          cue = new window$1.VTTCue(mediaTime, mediaTime + segment.duration, segment.cueOut);
+          cue = new window$2.VTTCue(mediaTime, mediaTime + segment.duration, segment.cueOut);
           cue.adStartTime = mediaTime; // Assumes tag format to be
           // #EXT-X-CUE-OUT:30
 
@@ -22620,7 +22581,7 @@
               adOffset = _segment$cueOutCont$s[0],
               adTotal = _segment$cueOutCont$s[1];
 
-          cue = new window$1.VTTCue(mediaTime, mediaTime + segment.duration, '');
+          cue = new window$2.VTTCue(mediaTime, mediaTime + segment.duration, '');
           cue.adStartTime = mediaTime - adOffset;
           cue.adEndTime = cue.adStartTime + adTotal;
           track.addCue(cue);
@@ -22657,6 +22618,7 @@
       var segments = playlist.segments || [];
       var syncPoint = null;
       var lastDistance = null;
+      var totalSegmentTime = 0;
       currentTime = currentTime || 0;
 
       for (var i = 0; i < segments.length; i++) {
@@ -22665,6 +22627,11 @@
         if (segment.dateTimeObject) {
           var segmentTime = segment.dateTimeObject.getTime() / 1000;
           var segmentStart = segmentTime + syncController.datetimeToDisplayTime;
+
+          if (segment.discontinuity) {
+            segmentStart = segmentStart > totalSegmentTime ? totalSegmentTime : segmentStart;
+          }
+
           var distance = Math.abs(currentTime - segmentStart); // Once the distance begins to increase, or if distance is 0, we have passed
           // currentTime and can stop looking for better candidates
 
@@ -22678,6 +22645,8 @@
             segmentIndex: i
           };
         }
+
+        totalSegmentTime += segment.duration;
       }
 
       return syncPoint;
@@ -22772,7 +22741,7 @@
   var SyncController =
   /*#__PURE__*/
   function (_videojs$EventTarget) {
-    _inheritsLoose(SyncController, _videojs$EventTarget);
+    inheritsLoose(SyncController, _videojs$EventTarget);
 
     function SyncController(options) {
       var _this;
@@ -23092,16 +23061,163 @@
     /*! @name @videojs/http-streaming @version 1.11.0-alpha.1 @license Apache-2.0 */
 
     var decrypterWorker = function () {
-      /*
-       * pkcs7.pad
-       * https://github.com/brightcove/pkcs7
-       *
-       * Copyright (c) 2014 Brightcove
-       * Licensed under the apache2 license.
+
+      function _defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ("value" in descriptor) descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+
+      function _createClass(Constructor, protoProps, staticProps) {
+        if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+        if (staticProps) _defineProperties(Constructor, staticProps);
+        return Constructor;
+      }
+
+      var createClass = _createClass;
+
+      function _inheritsLoose(subClass, superClass) {
+        subClass.prototype = Object.create(superClass.prototype);
+        subClass.prototype.constructor = subClass;
+        subClass.__proto__ = superClass;
+      }
+
+      var inheritsLoose = _inheritsLoose;
+      /*! @name @videojs/vhs-utils @version 1.0.0 @license MIT */
+
+      /**
+       * @file stream.js
        */
 
       /**
+       * A lightweight readable stream implemention that handles event dispatching.
+       *
+       * @class Stream
+       */
+
+      var Stream =
+      /*#__PURE__*/
+      function () {
+        function Stream() {
+          this.listeners = {};
+        }
+        /**
+         * Add a listener for a specified event type.
+         *
+         * @param {string} type the event name
+         * @param {Function} listener the callback to be invoked when an event of
+         * the specified type occurs
+         */
+
+
+        var _proto = Stream.prototype;
+
+        _proto.on = function on(type, listener) {
+          if (!this.listeners[type]) {
+            this.listeners[type] = [];
+          }
+
+          this.listeners[type].push(listener);
+        }
+        /**
+         * Remove a listener for a specified event type.
+         *
+         * @param {string} type the event name
+         * @param {Function} listener  a function previously registered for this
+         * type of event through `on`
+         * @return {boolean} if we could turn it off or not
+         */
+        ;
+
+        _proto.off = function off(type, listener) {
+          if (!this.listeners[type]) {
+            return false;
+          }
+
+          var index = this.listeners[type].indexOf(listener); // TODO: which is better?
+          // In Video.js we slice listener functions
+          // on trigger so that it does not mess up the order
+          // while we loop through.
+          //
+          // Here we slice on off so that the loop in trigger
+          // can continue using it's old reference to loop without
+          // messing up the order.
+
+          this.listeners[type] = this.listeners[type].slice(0);
+          this.listeners[type].splice(index, 1);
+          return index > -1;
+        }
+        /**
+         * Trigger an event of the specified type on this stream. Any additional
+         * arguments to this function are passed as parameters to event listeners.
+         *
+         * @param {string} type the event name
+         */
+        ;
+
+        _proto.trigger = function trigger(type) {
+          var callbacks = this.listeners[type];
+
+          if (!callbacks) {
+            return;
+          } // Slicing the arguments on every invocation of this method
+          // can add a significant amount of overhead. Avoid the
+          // intermediate object creation for the common case of a
+          // single callback argument
+
+
+          if (arguments.length === 2) {
+            var length = callbacks.length;
+
+            for (var i = 0; i < length; ++i) {
+              callbacks[i].call(this, arguments[1]);
+            }
+          } else {
+            var args = Array.prototype.slice.call(arguments, 1);
+            var _length = callbacks.length;
+
+            for (var _i = 0; _i < _length; ++_i) {
+              callbacks[_i].apply(this, args);
+            }
+          }
+        }
+        /**
+         * Destroys the stream and cleans up.
+         */
+        ;
+
+        _proto.dispose = function dispose() {
+          this.listeners = {};
+        }
+        /**
+         * Forwards all `data` events on this stream to the destination stream. The
+         * destination stream should provide a method `push` to receive the data
+         * events as they arrive.
+         *
+         * @param {Stream} destination the stream that will receive all `data` events
+         * @see http://nodejs.org/api/stream.html#stream_readable_pipe_destination_options
+         */
+        ;
+
+        _proto.pipe = function pipe(destination) {
+          this.on('data', function (data) {
+            destination.push(data);
+          });
+        };
+
+        return Stream;
+      }();
+
+      var stream = Stream;
+      /*! @name pkcs7 @version 1.0.3 @license Apache-2.0 */
+
+      /**
        * Returns the subarray of a Uint8Array without PKCS#7 padding.
+       *
        * @param padded {Uint8Array} unencrypted bytes that have been padded
        * @return {Uint8Array} the unpadded bytes
        * @see http://tools.ietf.org/html/rfc5652
@@ -23110,54 +23226,8 @@
       function unpad(padded) {
         return padded.subarray(0, padded.byteLength - padded[padded.byteLength - 1]);
       }
+      /*! @name aes-decrypter @version 3.0.1 @license Apache-2.0 */
 
-      var classCallCheck = function classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-          throw new TypeError("Cannot call a class as a function");
-        }
-      };
-
-      var createClass = function () {
-        function defineProperties(target, props) {
-          for (var i = 0; i < props.length; i++) {
-            var descriptor = props[i];
-            descriptor.enumerable = descriptor.enumerable || false;
-            descriptor.configurable = true;
-            if ("value" in descriptor) descriptor.writable = true;
-            Object.defineProperty(target, descriptor.key, descriptor);
-          }
-        }
-
-        return function (Constructor, protoProps, staticProps) {
-          if (protoProps) defineProperties(Constructor.prototype, protoProps);
-          if (staticProps) defineProperties(Constructor, staticProps);
-          return Constructor;
-        };
-      }();
-
-      var inherits = function inherits(subClass, superClass) {
-        if (typeof superClass !== "function" && superClass !== null) {
-          throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-        }
-
-        subClass.prototype = Object.create(superClass && superClass.prototype, {
-          constructor: {
-            value: subClass,
-            enumerable: false,
-            writable: true,
-            configurable: true
-          }
-        });
-        if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-      };
-
-      var possibleConstructorReturn = function possibleConstructorReturn(self, call) {
-        if (!self) {
-          throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-        }
-
-        return call && (typeof call === "object" || typeof call === "function") ? call : self;
-      };
       /**
        * @file aes.js
        *
@@ -23210,17 +23280,17 @@
         var decTable = tables[1];
         var sbox = encTable[4];
         var sboxInv = decTable[4];
-        var i = void 0;
-        var x = void 0;
-        var xInv = void 0;
+        var i;
+        var x;
+        var xInv;
         var d = [];
         var th = [];
-        var x2 = void 0;
-        var x4 = void 0;
-        var x8 = void 0;
-        var s = void 0;
-        var tEnc = void 0;
-        var tDec = void 0; // Compute double and third tables
+        var x2;
+        var x4;
+        var x8;
+        var s;
+        var tEnc;
+        var tDec; // Compute double and third tables
 
         for (i = 0; i < 256; i++) {
           th[(d[i] = i << 1 ^ (i >> 7) * 283) ^ i] = i;
@@ -23261,35 +23331,33 @@
        * @param key {Array} The key as an array of 4, 6 or 8 words.
        */
 
-      var AES = function () {
+      var AES =
+      /*#__PURE__*/
+      function () {
         function AES(key) {
-          classCallCheck(this, AES);
           /**
-           * The expanded S-box and inverse S-box tables. These will be computed
-           * on the client so that we don't have to send them down the wire.
-           *
-           * There are two tables, _tables[0] is for encryption and
-           * _tables[1] is for decryption.
-           *
-           * The first 4 sub-tables are the expanded S-box with MixColumns. The
-           * last (_tables[01][4]) is the S-box itself.
-           *
-           * @private
-           */
+          * The expanded S-box and inverse S-box tables. These will be computed
+          * on the client so that we don't have to send them down the wire.
+          *
+          * There are two tables, _tables[0] is for encryption and
+          * _tables[1] is for decryption.
+          *
+          * The first 4 sub-tables are the expanded S-box with MixColumns. The
+          * last (_tables[01][4]) is the S-box itself.
+          *
+          * @private
+          */
           // if we have yet to precompute the S-box tables
           // do so now
-
           if (!aesTables) {
             aesTables = precompute();
           } // then make a copy of that object for use
 
 
           this._tables = [[aesTables[0][0].slice(), aesTables[0][1].slice(), aesTables[0][2].slice(), aesTables[0][3].slice(), aesTables[0][4].slice()], [aesTables[1][0].slice(), aesTables[1][1].slice(), aesTables[1][2].slice(), aesTables[1][3].slice(), aesTables[1][4].slice()]];
-          var i = void 0;
-          var j = void 0;
-          var tmp = void 0;
-          var encKey = void 0;
-          var decKey = void 0;
+          var i;
+          var j;
+          var tmp;
           var sbox = this._tables[0][4];
           var decTable = this._tables[1];
           var keyLen = key.length;
@@ -23299,8 +23367,8 @@
             throw new Error('Invalid aes key size');
           }
 
-          encKey = key.slice(0);
-          decKey = [];
+          var encKey = key.slice(0);
+          var decKey = [];
           this._key = [encKey, decKey]; // schedule encryption keys
 
           for (i = keyLen; i < 4 * keyLen + 28; i++) {
@@ -23332,31 +23400,33 @@
         /**
          * Decrypt 16 bytes, specified as four 32-bit words.
          *
-         * @param {Number} encrypted0 the first word to decrypt
-         * @param {Number} encrypted1 the second word to decrypt
-         * @param {Number} encrypted2 the third word to decrypt
-         * @param {Number} encrypted3 the fourth word to decrypt
+         * @param {number} encrypted0 the first word to decrypt
+         * @param {number} encrypted1 the second word to decrypt
+         * @param {number} encrypted2 the third word to decrypt
+         * @param {number} encrypted3 the fourth word to decrypt
          * @param {Int32Array} out the array to write the decrypted words
          * into
-         * @param {Number} offset the offset into the output array to start
+         * @param {number} offset the offset into the output array to start
          * writing results
          * @return {Array} The plaintext.
          */
 
 
-        AES.prototype.decrypt = function decrypt(encrypted0, encrypted1, encrypted2, encrypted3, out, offset) {
+        var _proto = AES.prototype;
+
+        _proto.decrypt = function decrypt(encrypted0, encrypted1, encrypted2, encrypted3, out, offset) {
           var key = this._key[1]; // state variables a,b,c,d are loaded with pre-whitened data
 
           var a = encrypted0 ^ key[0];
           var b = encrypted3 ^ key[1];
           var c = encrypted2 ^ key[2];
           var d = encrypted1 ^ key[3];
-          var a2 = void 0;
-          var b2 = void 0;
-          var c2 = void 0; // key.length === 2 ?
+          var a2;
+          var b2;
+          var c2; // key.length === 2 ?
 
           var nInnerRounds = key.length / 4 - 2;
-          var i = void 0;
+          var i;
           var kIndex = 4;
           var table = this._tables[1]; // load up the tables
 
@@ -23391,122 +23461,7 @@
         return AES;
       }();
       /**
-       * @file stream.js
-       */
-
-      /**
-       * A lightweight readable stream implemention that handles event dispatching.
-       *
-       * @class Stream
-       */
-
-
-      var Stream = function () {
-        function Stream() {
-          classCallCheck(this, Stream);
-          this.listeners = {};
-        }
-        /**
-         * Add a listener for a specified event type.
-         *
-         * @param {String} type the event name
-         * @param {Function} listener the callback to be invoked when an event of
-         * the specified type occurs
-         */
-
-
-        Stream.prototype.on = function on(type, listener) {
-          if (!this.listeners[type]) {
-            this.listeners[type] = [];
-          }
-
-          this.listeners[type].push(listener);
-        };
-        /**
-         * Remove a listener for a specified event type.
-         *
-         * @param {String} type the event name
-         * @param {Function} listener  a function previously registered for this
-         * type of event through `on`
-         * @return {Boolean} if we could turn it off or not
-         */
-
-
-        Stream.prototype.off = function off(type, listener) {
-          if (!this.listeners[type]) {
-            return false;
-          }
-
-          var index = this.listeners[type].indexOf(listener);
-          this.listeners[type].splice(index, 1);
-          return index > -1;
-        };
-        /**
-         * Trigger an event of the specified type on this stream. Any additional
-         * arguments to this function are passed as parameters to event listeners.
-         *
-         * @param {String} type the event name
-         */
-
-
-        Stream.prototype.trigger = function trigger(type) {
-          var callbacks = this.listeners[type];
-
-          if (!callbacks) {
-            return;
-          } // Slicing the arguments on every invocation of this method
-          // can add a significant amount of overhead. Avoid the
-          // intermediate object creation for the common case of a
-          // single callback argument
-
-
-          if (arguments.length === 2) {
-            var length = callbacks.length;
-
-            for (var i = 0; i < length; ++i) {
-              callbacks[i].call(this, arguments[1]);
-            }
-          } else {
-            var args = Array.prototype.slice.call(arguments, 1);
-            var _length = callbacks.length;
-
-            for (var _i = 0; _i < _length; ++_i) {
-              callbacks[_i].apply(this, args);
-            }
-          }
-        };
-        /**
-         * Destroys the stream and cleans up.
-         */
-
-
-        Stream.prototype.dispose = function dispose() {
-          this.listeners = {};
-        };
-        /**
-         * Forwards all `data` events on this stream to the destination stream. The
-         * destination stream should provide a method `push` to receive the data
-         * events as they arrive.
-         *
-         * @param {Stream} destination the stream that will receive all `data` events
-         * @see http://nodejs.org/api/stream.html#stream_readable_pipe_destination_options
-         */
-
-
-        Stream.prototype.pipe = function pipe(destination) {
-          this.on('data', function (data) {
-            destination.push(data);
-          });
-        };
-
-        return Stream;
-      }();
-      /**
-       * @file async-stream.js
-       */
-
-      /**
-       * A wrapper around the Stream class to use setTiemout
+       * A wrapper around the Stream class to use setTimeout
        * and run stream "jobs" Asynchronously
        *
        * @class AsyncStream
@@ -23514,14 +23469,15 @@
        */
 
 
-      var AsyncStream = function (_Stream) {
-        inherits(AsyncStream, _Stream);
+      var AsyncStream =
+      /*#__PURE__*/
+      function (_Stream) {
+        inheritsLoose(AsyncStream, _Stream);
 
         function AsyncStream() {
-          classCallCheck(this, AsyncStream);
+          var _this;
 
-          var _this = possibleConstructorReturn(this, _Stream.call(this, Stream));
-
+          _this = _Stream.call(this, stream) || this;
           _this.jobs = [];
           _this.delay = 1;
           _this.timeout_ = null;
@@ -23534,7 +23490,9 @@
          */
 
 
-        AsyncStream.prototype.processJob_ = function processJob_() {
+        var _proto = AsyncStream.prototype;
+
+        _proto.processJob_ = function processJob_() {
           this.jobs.shift()();
 
           if (this.jobs.length) {
@@ -23542,15 +23500,15 @@
           } else {
             this.timeout_ = null;
           }
-        };
+        }
         /**
          * push a job into the stream
          *
          * @param {Function} job the job to push into the stream
          */
+        ;
 
-
-        AsyncStream.prototype.push = function push(job) {
+        _proto.push = function push(job) {
           this.jobs.push(job);
 
           if (!this.timeout_) {
@@ -23559,14 +23517,7 @@
         };
 
         return AsyncStream;
-      }(Stream);
-      /**
-       * @file decrypter.js
-       *
-       * An asynchronous implementation of AES-128 CBC decryption with
-       * PKCS#7 padding.
-       */
-
+      }(stream);
       /**
        * Convert network-order (big-endian) bytes into their little-endian
        * representation.
@@ -23600,16 +23551,16 @@
         var decrypted32 = new Int32Array(decrypted.buffer); // temporary variables for working with the IV, encrypted, and
         // decrypted data
 
-        var init0 = void 0;
-        var init1 = void 0;
-        var init2 = void 0;
-        var init3 = void 0;
-        var encrypted0 = void 0;
-        var encrypted1 = void 0;
-        var encrypted2 = void 0;
-        var encrypted3 = void 0; // iteration variable
+        var init0;
+        var init1;
+        var init2;
+        var init3;
+        var encrypted0;
+        var encrypted1;
+        var encrypted2;
+        var encrypted3; // iteration variable
 
-        var wordIx = void 0; // pull out the words of the IV to ensure we don't modify the
+        var wordIx; // pull out the words of the IV to ensure we don't modify the
         // passed-in reference and easier access
 
         init0 = initVector[0];
@@ -23655,9 +23606,10 @@
        */
 
 
-      var Decrypter = function () {
+      var Decrypter =
+      /*#__PURE__*/
+      function () {
         function Decrypter(encrypted, key, initVector, done) {
-          classCallCheck(this, Decrypter);
           var step = Decrypter.STEP;
           var encrypted32 = new Int32Array(encrypted.buffer);
           var decrypted = new Uint8Array(encrypted.byteLength);
@@ -23680,15 +23632,16 @@
         /**
          * a getter for step the maximum number of bytes to process at one time
          *
-         * @return {Number} the value of step 32000
+         * @return {number} the value of step 32000
          */
 
+
+        var _proto = Decrypter.prototype;
         /**
          * @private
          */
 
-
-        Decrypter.prototype.decryptChunk_ = function decryptChunk_(encrypted, key, initVector, decrypted) {
+        _proto.decryptChunk_ = function decryptChunk_(encrypted, key, initVector, decrypted) {
           return function () {
             var bytes = decrypt(encrypted, key, initVector);
             decrypted.set(bytes, encrypted.byteOffset);
@@ -23696,8 +23649,8 @@
         };
 
         createClass(Decrypter, null, [{
-          key: 'STEP',
-          get: function get$$1() {
+          key: "STEP",
+          get: function get() {
             // 4 * 8000;
             return 32000;
           }
@@ -24513,7 +24466,7 @@
   var MasterPlaylistController =
   /*#__PURE__*/
   function (_videojs$EventTarget) {
-    _inheritsLoose(MasterPlaylistController, _videojs$EventTarget);
+    inheritsLoose(MasterPlaylistController, _videojs$EventTarget);
 
     function MasterPlaylistController(options) {
       var _this;
@@ -24558,16 +24511,16 @@
         timeout: null
       };
       _this.mediaTypes_ = createMediaTypes();
-      _this.mediaSource = new window$1.MediaSource();
+      _this.mediaSource = new window$2.MediaSource();
 
       _this.mediaSource.addEventListener('durationchange', function () {
         _this.tech_.trigger('durationchange');
       }); // load the media source into the player
 
 
-      _this.mediaSource.addEventListener('sourceopen', _this.handleSourceOpen_.bind(_assertThisInitialized(_this)));
+      _this.mediaSource.addEventListener('sourceopen', _this.handleSourceOpen_.bind(assertThisInitialized(_this)));
 
-      _this.mediaSource.addEventListener('sourceended', _this.handleSourceEnded_.bind(_assertThisInitialized(_this))); // we don't have to handle sourceclose since dispose will handle termination of
+      _this.mediaSource.addEventListener('sourceended', _this.handleSourceEnded_.bind(assertThisInitialized(_this))); // we don't have to handle sourceclose since dispose will handle termination of
       // everything, and the MediaSource should not be detached without a proper disposal
 
 
@@ -24635,7 +24588,7 @@
 
 
       loaderStats.forEach(function (stat) {
-        _this[stat + '_'] = sumLoaderStat.bind(_assertThisInitialized(_this), stat);
+        _this[stat + '_'] = sumLoaderStat.bind(assertThisInitialized(_this), stat);
       });
       _this.logger_ = logger('MPC');
       _this.triggeredFmp4Usage = false;
@@ -25726,7 +25679,7 @@
 
     _proto.excludeUnsupportedVariants_ = function excludeUnsupportedVariants_() {
       this.master().playlists.forEach(function (variant) {
-        if (variant.attributes.CODECS && window$1.MediaSource && window$1.MediaSource.isTypeSupported && !window$1.MediaSource.isTypeSupported("video/mp4; codecs=\"" + mapLegacyAvcCodecs(variant.attributes.CODECS) + "\"")) {
+        if (variant.attributes.CODECS && window$2.MediaSource && window$2.MediaSource.isTypeSupported && !window$2.MediaSource.isTypeSupported("video/mp4; codecs=\"" + mapLegacyAvcCodecs(variant.attributes.CODECS) + "\"")) {
           variant.excludeUntil = Infinity;
         }
       });
@@ -25990,7 +25943,7 @@
         _this.tech_.off('canplay', canPlayHandler);
 
         if (_this.checkCurrentTimeTimeout_) {
-          window$1.clearTimeout(_this.checkCurrentTimeTimeout_);
+          window$2.clearTimeout(_this.checkCurrentTimeTimeout_);
         }
 
         _this.cancelTimer_();
@@ -26009,11 +25962,11 @@
       this.checkCurrentTime_();
 
       if (this.checkCurrentTimeTimeout_) {
-        window$1.clearTimeout(this.checkCurrentTimeTimeout_);
+        window$2.clearTimeout(this.checkCurrentTimeTimeout_);
       } // 42 = 24 fps // 250 is what Webkit uses // FF uses 15
 
 
-      this.checkCurrentTimeTimeout_ = window$1.setTimeout(this.monitorCurrentTime_.bind(this), 250);
+      this.checkCurrentTimeTimeout_ = window$2.setTimeout(this.monitorCurrentTime_.bind(this), 250);
     }
     /**
      * The purpose of this function is to emulate the "waiting" event on
@@ -26478,7 +26431,7 @@
 
   var version$3 = "4.4.0";
 
-  var version$4 = "3.0.0";
+  var version$4 = "3.0.1";
 
   videojs.use('*', function (player) {
     return {
@@ -26655,11 +26608,11 @@
   };
 
   var getVhsLocalStorage = function getVhsLocalStorage() {
-    if (!window$1.localStorage) {
+    if (!window$2.localStorage) {
       return null;
     }
 
-    var storedObject = window$1.localStorage.getItem(LOCAL_STORAGE_KEY);
+    var storedObject = window$2.localStorage.getItem(LOCAL_STORAGE_KEY);
 
     if (!storedObject) {
       return null;
@@ -26674,7 +26627,7 @@
   };
 
   var updateVhsLocalStorage = function updateVhsLocalStorage(options) {
-    if (!window$1.localStorage) {
+    if (!window$2.localStorage) {
       return false;
     }
 
@@ -26682,7 +26635,7 @@
     objectToStore = objectToStore ? videojs.mergeOptions(objectToStore, options) : options;
 
     try {
-      window$1.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(objectToStore));
+      window$2.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(objectToStore));
     } catch (e) {
       // Throws if storage is full (e.g., always on iOS 5+ Safari private mode, where
       // storage is set to 0).
@@ -26761,7 +26714,7 @@
   var HlsHandler =
   /*#__PURE__*/
   function (_Component) {
-    _inheritsLoose(HlsHandler, _Component);
+    inheritsLoose(HlsHandler, _Component);
 
     function HlsHandler(source, tech, options) {
       var _this;
@@ -26780,7 +26733,7 @@
                 type: 'usage',
                 name: 'hls-player-access'
               });
-              return _assertThisInitialized(_this);
+              return assertThisInitialized(_this);
             },
             configurable: true
           });
@@ -26791,9 +26744,9 @@
         // will act accordingly.
 
 
-        _player.vhs = _assertThisInitialized(_this); // deprecated, for backwards compatibility
+        _player.vhs = assertThisInitialized(_this); // deprecated, for backwards compatibility
 
-        _player.dash = _assertThisInitialized(_this);
+        _player.dash = assertThisInitialized(_this);
         _this.player_ = _player;
       }
 
@@ -27163,7 +27116,7 @@
         return;
       }
 
-      this.tech_.src(window$1.URL.createObjectURL(this.masterPlaylistController_.mediaSource));
+      this.tech_.src(window$2.URL.createObjectURL(this.masterPlaylistController_.mediaSource));
     }
     /**
      * Initializes the quality levels and sets listeners to update them.
@@ -27356,7 +27309,7 @@
    */
 
   var supportsNativeMediaSources = function supportsNativeMediaSources() {
-    return !!window$1.MediaSource && !!window$1.MediaSource.isTypeSupported && window$1.MediaSource.isTypeSupported('video/mp4;codecs="avc1.4d400d,mp4a.40.2"');
+    return !!window$2.MediaSource && !!window$2.MediaSource.isTypeSupported && window$2.MediaSource.isTypeSupported('video/mp4;codecs="avc1.4d400d,mp4a.40.2"');
   }; // register source handlers with the appropriate techs
 
 
