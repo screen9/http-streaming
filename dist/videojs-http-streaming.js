@@ -2815,11 +2815,16 @@
     return headers;
   };
 
-  /*! @name pkcs7 @version 1.0.3 @license Apache-2.0 */
+  /*
+   * pkcs7.pad
+   * https://github.com/brightcove/pkcs7
+   *
+   * Copyright (c) 2014 Brightcove
+   * Licensed under the apache2 license.
+   */
 
   /**
    * Returns the subarray of a Uint8Array without PKCS#7 padding.
-   *
    * @param padded {Uint8Array} unencrypted bytes that have been padded
    * @return {Uint8Array} the unpadded bytes
    * @see http://tools.ietf.org/html/rfc5652
@@ -22652,7 +22657,12 @@
       var segments = playlist.segments || [];
       var syncPoint = null;
       var lastDistance = null;
-      var totalSegmentTime = 0;
+      var datetimeToDisplayTime = syncController.datetimeToDisplayTime;
+
+      if (segments.length && segments[0].dateTimeObject) {
+        datetimeToDisplayTime -= segments[0].dateTimeObject.getTime() / 1000 + datetimeToDisplayTime;
+      }
+
       currentTime = currentTime || 0;
 
       for (var i = 0; i < segments.length; i++) {
@@ -22660,12 +22670,7 @@
 
         if (segment.dateTimeObject) {
           var segmentTime = segment.dateTimeObject.getTime() / 1000;
-          var segmentStart = segmentTime + syncController.datetimeToDisplayTime;
-
-          if (segment.discontinuity) {
-            segmentStart = segmentStart > totalSegmentTime ? totalSegmentTime : segmentStart;
-          }
-
+          var segmentStart = segmentTime + syncController.datetimeToDisplayTime - (segmentTime + datetimeToDisplayTime);
           var distance = Math.abs(currentTime - segmentStart); // Once the distance begins to increase, or if distance is 0, we have passed
           // currentTime and can stop looking for better candidates
 
@@ -22680,7 +22685,7 @@
           };
         }
 
-        totalSegmentTime += segment.duration;
+        datetimeToDisplayTime -= segment.duration;
       }
 
       return syncPoint;
@@ -23095,11 +23100,16 @@
     /*! @name @videojs/http-streaming @version 1.11.0-alpha.1 @license Apache-2.0 */
 
     var decrypterWorker = function () {
-      /*! @name pkcs7 @version 1.0.3 @license Apache-2.0 */
+      /*
+       * pkcs7.pad
+       * https://github.com/brightcove/pkcs7
+       *
+       * Copyright (c) 2014 Brightcove
+       * Licensed under the apache2 license.
+       */
 
       /**
        * Returns the subarray of a Uint8Array without PKCS#7 padding.
-       *
        * @param padded {Uint8Array} unencrypted bytes that have been padded
        * @return {Uint8Array} the unpadded bytes
        * @see http://tools.ietf.org/html/rfc5652
